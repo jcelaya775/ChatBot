@@ -7,7 +7,7 @@
     },
     {
         "tag": "goodbye",
-        "patterns": ["Bye", "cya", "See you later", "I am leaving", "Have a good day", "Have a nice day"],
+        "patterns": ["Bye", "Goodbye", "cya", "See you later", "I am leaving", "Have a good day", "Have a nice day"],
         "responses": ["Talk to you later!", "Goodbye!", "Nice chatting.", "See you later, aligator.", "Good talk!", "Have a great day!"],
         "context-set": ""
     },
@@ -35,7 +35,7 @@
     },
     {
         "tag": "payments",
-        "patterns": ["pay", "payment", "Do you take credit cards?", "Do you accept Mastercard?", "Are you cash only?" ],
+        "patterns": ["pay", "payment", "payment method", "Do you take credit cards?", "Do you accept Mastercard?", "Are you cash only?" ],
         "responses": ["We accept VISA, Mastercard and AMEX", "We accept most major credit cards"]
     },
     {

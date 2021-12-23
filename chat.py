@@ -1,4 +1,5 @@
 import json
+import os
 import pickle
 import random
 import tensorflow as tf
@@ -6,7 +7,6 @@ import tflearn
 import numpy as np
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
-nltk.download('punkt')
 stemmer = LancasterStemmer()
 
 with open("intents.json") as file:
@@ -79,45 +79,50 @@ net = tflearn.regression(net)
 
 model = tflearn.DNN(net)
 
-try:
+if os.path.exists("model.tflearn.meta"):
     model.load("model.tflearn")
-except:
+else:
     model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
     model.save("model.tflearn")
 
 
-# # convert bag of words to a numpy array that has word frequencies
-# def bag_of_words(s, words):
-#     bag = [0 for _ in range(len(words))]
+# convert bag of words to a numpy array that has word frequencies
+def bag_of_words(s, words):
+    bag = [0 for _ in range(len(words))]
 
-#     s_words = nltk.word_tokenize(s)  # list of tokenized words
-#     s_words = [stemmer.stem(word.lower())
-#                for word in s_words]  # stem words to root words
+    s_words = nltk.word_tokenize(s)  # list of tokenized words
+    s_words = [stemmer.stem(word.lower())
+               for word in s_words]  # stem words to root words
 
-#     for se in s_words:
-#         for i, w in enumerate(words):
-#             if w == se:
-#                 bag[i] = 1
+    for se in s_words:
+        for i, w in enumerate(words):
+            if w == se:
+                bag[i] = 1
 
-#     return np.array(bag)
-
-
-# def chat():
-#     print("Start talking with the bot! type quit to stop")
-#     while True:
-#         inp = input("You: ")
-#         if inp.lower() == "quit":
-#             break
-
-#         results = model.predict([bag_of_words(inp, words)])
-#         results_index = np.argmax(results)
-#         tag = labels[results_index]
-
-#         for tg in data["intents"]:
-#             if tg["tag"] == tag:
-#                 responses = tg["responses"]
-
-#         print(random.choice(responses))
+    return np.array(bag)
 
 
-# chat()
+def chat():
+    print("Start talking with the bot! type quit to stop")
+    while True:
+        inp = input("You: ")
+        if inp.lower() == "quit":
+            break
+
+        results = model.predict([bag_of_words(inp, words)])
+        results_index = np.argmax(results)
+        tag = labels[results_index]
+
+        print(results[0][results_index])
+
+        if results[0][results_index] > 0.95:
+            for tg in data["intents"]:
+                if tg["tag"] == tag:
+                    responses = tg["responses"]
+
+            print(random.choice(responses))
+        else:
+            print("I didn't quite get that, try again.")
+
+
+chat()
